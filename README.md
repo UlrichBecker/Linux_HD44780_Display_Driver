@@ -69,11 +69,11 @@ each defined ioctl- command.
 # cat /proc/driver/anLcd 
 ```
 ```
-anLcd 20x4 Version: 0.1
+anLcd 16x2 Version: 0.1
 
-GPIO 17: rs = low
-GPIO 27: rw = high
-GPIO 22: en = low
+GPIO 16: rs = low
+GPIO 20: rw = high
+GPIO 21: en = low
 GPIO 05: d4 = high
 GPIO 06: d5 = high
 GPIO 13: d6 = high
