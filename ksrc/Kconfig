@@ -1,0 +1,122 @@
+###############################################################################
+##                                                                           ##
+##         Kernel Configuration for HD44780 compatible LCD-Driver            ##
+##                                                                           ##
+##---------------------------------------------------------------------------##
+## File:   text_lcd/Kconfig                                                  ##
+## Author: Ulrich Becker                                                     ##
+## Date:   13.03.2017                                                        ##
+###############################################################################
+
+menu "Driver for HD44780 / KS0070b compatible alphanumeric displays"
+
+config ALPHANUMERIC_DISPLAY
+   tristate "HD44780 / KS0070b compatible text based LC-Display support"
+   default m
+   depends on GPIOLIB
+   help
+      Driver for HD44780 / KS0070b compatible alphanumeric displays.
+      Directly connected to GPIO port.
+
+if ALPHANUMERIC_DISPLAY
+
+config ST7066U
+   bool "Enables compatibility to display-controller ST7066U"
+   default y
+   help
+      Say yes (y) if you are not sure.
+
+config LCD_UNICODE
+   bool "Support of 16-Bit for some special characters"
+   default y
+   help
+      Support of 16-bit coded special characters.
+      E.g.: German umlaute
+      Say y (yes) if you are not sure.
+
+config LCD_USE_BACKSLASH
+   bool "Support of backslash character '\\'"
+   default y
+   help
+     Support of presentation of backslash character.
+     NOTE: This requires a place in CG-RAM!
+
+config LCD_USE_PARAGRAPH
+   bool "Support of paragraph character '§'"
+   default y
+   depends on LCD_UNICODE
+   help
+     Support of presentation of paragraph character.
+     NOTE: This requires a place in CG-RAM!
+
+config AN_LCD_READBACK
+   bool "Support of read back ability."
+   default y
+   help
+      Support of read back ability.
+      E.g.: cat /dev/anlcd
+
+config DEBUG_AN_LCD
+   bool "Puts additional debug infos in sys-log."
+   default n
+
+config DEBUG_AN_LCD_FSM
+   bool "Puts additional debug infos of Esc-ESM in sys-log."
+   depends on DEBUG_AN_LCD
+   default n
+
+config AN_LCD_NO_DEV_TREE
+   bool "Use no device-tree"
+   default n
+   depends on OF
+
+if AN_LCD_NO_DEV_TREE || !OF
+
+config AN_LCD_MAX_X
+   int "Number of characters per text-line"
+   default 16
+   range 8 24
+   help
+      Number of characters per line
+
+config AN_LCD_MAX_Y
+   int "Number of text-lines"
+   default 2
+   range 1 4
+   help
+      Number of text-lines
+
+config AN_LCD_GPIO_NUMBER_RS
+    int "GPIO-number connected to display-port rs"
+    default 16
+
+config AN_LCD_GPIO_NUMBER_RW
+    int "GPIO-number connected to display-port r/w"
+    default 20
+
+config AN_LCD_GPIO_NUMBER_EN
+    int "GPIO-number connected to display-port enable (en)"
+    default 21
+
+config AN_LCD_GPIO_NUMBER_D4
+    int "GPIO-number connected to display-port d4"
+    default 5
+
+config AN_LCD_GPIO_NUMBER_D5
+    int "GPIO-number connected to display-port d5"
+    default 6
+
+config AN_LCD_GPIO_NUMBER_D6
+    int "GPIO-number connected to display-port d6"
+    default 13
+
+config AN_LCD_GPIO_NUMBER_D7
+    int "GPIO-number connected to display-port d7"
+    default 26
+
+
+endif #if ANLCD_NO_DEV_TREE || !OF
+endif # if ALPHANUMERIC_DISPLAY
+endmenu
+
+#=================================== EOF ======================================

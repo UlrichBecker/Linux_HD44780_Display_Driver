@@ -1,0 +1,117 @@
+/*****************************************************************************/
+/*                                                                           */
+/*!       @brief Device-tree overlay of anLcd for Raspberry Pi 2,3           */
+/*                                                                           */
+/*---------------------------------------------------------------------------*/
+/*! @file   anLcd_raspi.dts                                                  */
+/*! @author Ulrich Becker                                                    */
+/*! @date   20.02.2017                                                       */
+/*****************************************************************************/
+/*!
+ * @note Before you compile this by the device-tree-compiler, \n
+ *       you have to precompile this file by the gcc-precompiler
+ *       cpp:
+ * @code
+ * cpp -P -DNODE_NAME=tlcd -o tlcd_raspi.dts.tmp tlcd_raspi.dts
+ * dtc -@ -I dts -O dtb -o tlcd_raspi.dtb tlcd_raspi.dts.tmp
+ * @endcode
+ */
+/*!----------------------------------------------------------------------------
+ * Raspberry Pi 2 & 3 Pin Mapping
+ * ==============================
+ * @code
+ *                            +-----+
+ *               3.3V PWR   1 | O O |  2  5V PWR
+ *    I2C1 SDA   GPIO  2    3 | O O |  4  5V PWR
+ *    I2C1 SCL   GPIO  3    5 | O O |  6  GND
+ *               GPIO  4    7 | O O |  8  UART0 TX
+ *               GND        9 | O O | 10  UART0 RX
+ *               GPIO 17   11 | O O | 12  GPIO 18
+ *               GPIO 27   13 | O O | 14  GND
+ *               GPIO 22   15 | O O | 16  GPIO 23
+ *               3.3V PWR  17 | O O | 18  GPIO 24
+ *    SPI0 MOSI  GPIO 10   19 | O O | 20  GND
+ *    SPI0 MISO  GPIO  9   21 | O O | 22  GPIO 25
+ *    SPI0 SCLK  GPIO 11   23 | O O | 24  GPIO  8   SPI0 CS0
+ *               GND       25 | O O | 26  GPIO  7   SPI0 CS1
+ *               RFU       27 | O O | 28  RFU
+ *               GPIO  5   29 | O O | 30  GND
+ *               GPIO  6   31 | O O | 32  GPIO 12
+ *               GPIO 13   33 | O O | 34  GND
+ *    SPI1 MISO  GPIO 19   35 | O O | 36  GPIO 16   SPI1 CS0
+ *               GPIO 26   37 | O O | 38  GPIO 20   SPI1 MOSI
+ *               GND       39 | O O | 40  GPIO 21   SPI1 SCLK
+ *                            +-----+
+ * @endcode
+ */
+
+#include "anLcd_dev_tree_names.h"
+
+/*
+ * Please see also the specification of your display!
+ */
+
+/* Dimensions of the using text LCD -----------------------------------------*/
+#define X     16 //!<@brief Number of characters per line
+#define Y      2 //!<@brief Number of lines
+//#define X     20
+//#define Y      4
+
+/* GBIO-pins required for the text-LCD-device -------------------------------*/
+#define RS    16
+#define RW    20
+#define EN    21
+#define D4     5
+#define D5     6
+#define D6    13
+#define D7    26
+
+#ifndef NODE_NAME
+   #define NODE_NAME anLcd
+#endif
+
+#define PIN_NODE_NAME anLcd_pins
+
+
+/dts-v1/;
+/plugin/;
+
+/
+{
+   compatible = "brcm,bcm2708";
+
+   fragment@0
+   {
+      target = <&gpio>;
+      __overlay__
+      {
+         pinctrl-names = "default";
+         pinctrl-0 = <&PIN_NODE_NAME>;
+
+         NODE_NAME
+         {
+            compatible = TS(NODE_NAME);
+
+            DT_TAG_RS = <RS>;
+            DT_TAG_RW = <RW>;
+            DT_TAG_EN = <EN>;
+            DT_TAG_D4 = <D4>;
+            DT_TAG_D5 = <D5>;
+            DT_TAG_D6 = <D6>;
+            DT_TAG_D7 = <D7>;
+
+            DT_TAG_X = <X>;
+            DT_TAG_Y = <Y>;
+         };
+
+         PIN_NODE_NAME: PIN_NODE_NAME
+         {
+            brcm,pins =     <RS RW EN D4 D5 D6 D7>; /* gpio no. */
+            brcm,function = < 0  0  0  0  0  0  0>; /* 0:in, 1:out */
+            brcm,pull =     < 2  2  2  2  2  2  2>; /* 2:up 1:down 0:none */
+         };
+      };
+   };
+};
+
+//================================== EOF ======================================
