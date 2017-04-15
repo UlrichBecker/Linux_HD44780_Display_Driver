@@ -441,6 +441,10 @@ typedef struct
 
 #define IOCTL_ITEM( n, f ) { #n, n, f }
 
+/*!
+ * @todo Ioctl-dummy handling of TCGETS and TCSETS defined in "termios.h"
+ */
+
 const static IOC_INFO_T mg_ioctlList[] =
 {
    IOCTL_ITEM( AN_DISPLAY_IOC_RESET,              onIoctlReset ),
