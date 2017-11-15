@@ -7,6 +7,7 @@ Advantages:
 - HD44780 compatible displays are direct contactable by the linux host-device.
   That means, no additional (active) hardware necessary. (Except some pullup resistors.)
 - GPIO connections free selectable by devicetree or device-tree overlay.
+- Supports all screen sizes up to the maximum of the HD44780.
 - Compilable as single device-driver "anLcd.ko" or as kernel-build-in.
 - Using is independend of programming-languages. That means, no extra libraries for
   user-applications necessary.
