@@ -22,6 +22,10 @@ Advantages:
 - Driver status readable by process file system, e.g.: "cat /proc/driver/anLcd".
 - HD44780 CG-RAM for special characters programmable by ioctl();
 
+<b>Test Setup with Raspberry Pi and 2x16 Display</b>
+
+![test setup](./doc/test_setup_Breadboard.png)
+
 Base source-code in (./src ) is also suitable for AVR-microcontroller projects
 e.g. for Arduino.
 
