@@ -26,10 +26,24 @@ Advantages:
 
 ![test setup](./doc/test_setup_Breadboard.png)
 
+![test setup](./doc/test_setup_Schaltplan.png)
+
+**Caution:**</br>
+If the GPIO connectors of the Linux-device leads 3.3 volts only and the LCD-device
+is built for a 5.0 volts logic, like the figures above, so you have to check whether 
+the GPIO connectors withstand the 10 k Ohm pull-up resistors connected to +5.0 volts!</br>
+Otherwise you risk the danger to damage the Linux-device!</br>
+If you are not sure about that, so you can take a 3.3 volts to 5.0 volts
+and vice-versa translator.
+E.g. the IC LSF0108 resp TXB0108 from Texas Instruments.</br>
+http://www.ti.com/lit/ds/symlink/lsf0108.pdf
+
+# Compiling
+
 Base source-code in (./src ) is also suitable for AVR-microcontroller projects
 e.g. for Arduino.
 
-# Compiling
+
 1) Go in the sub-directory ./ksrc
 2) Type "make all" (builds the kernel module)
 3) Type "make blob" (builds the device-tree overlay)
