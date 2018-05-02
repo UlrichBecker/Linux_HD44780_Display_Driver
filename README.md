@@ -43,10 +43,47 @@ http://www.ti.com/lit/ds/symlink/lsf0108.pdf
 Base source-code in (./src ) is also suitable for AVR-microcontroller projects
 e.g. for Arduino.
 
+**Cross-Compiling kernel-module anLcd.ko**</br>
+Requirements:
+- A cross-toolchain for the target-system is installed on your computer.
+- The linux source-tree for your target-system is available.
+
+Both things can you for example obtain by Buildroot or Yocto.</br>
+https://buildroot.org/ </br>
+https://www.yoctoproject.org/ </br>
+
+In the Makefile there are three vareables which you have to adjust on your tool-chain:
+- ```TOOLCHAIN_PATH``` path to your tool-chain.
+- ```CROSS_COMPILE``` prefix for the cross-compiler.
+- ```CROSS_KERNEL_SRC_DIR``` path to the root of the embedded linux source-tree.
+
+The following code- snippet shows the current setting in the Makefile and is a
+proposal for your own settings. In this case the tool-chain was build by Buildroot for the Rasberry Pi.
+```
+TOOLCHAIN_BASE ?= ~/src/Linux_build/buildroot_pi/output/
+TOOLCHAIN_PATH ?= $(TOOLCHAIN_BASE)host/usr/bin/
+CROSS_COMPILE  ?= $(TOOLCHAIN_PATH)arm-buildroot-linux-uclibcgnueabihf-
+CROSS_KERNEL_SRC_DIR ?= $(shell echo $(TOOLCHAIN_BASE)/build/linux-[!h]* )
+```
+The makefile-variable ```TOOLCHAIN_BASE``` is just helpful, you don't need it really.</br>
+When you has used Buildroot may by you have to adjust this variable only.</br>
+If you'll connect the LCD on other GPIO-pins like the figure above, so you have at first
+edit the file ```./ksrc/anLcd_raspi.dts```
 
 1) Go in the sub-directory ./ksrc
-2) Type "make all" (builds the kernel module)
-3) Type "make blob" (builds the device-tree overlay)
+2) Type ```make all``` (builds the kernel module)
+3) Type ```make blob```(builds the device-tree overlay)
+
+**load the driver**
+```
+sudo insmod anLcd.ko
+```
+After that you should have a new device-file ```anlcd``` in the folder ```/dev```</br>
+If you'll make this device accessable for all users, so you can write a new
+udev- rule in the folder ```/etc/udev/rules.d/```</br>
+
+By the following steps we assumed the target-device is a Raspberry Pi:</br>
+
 
 **First example**
 ```
