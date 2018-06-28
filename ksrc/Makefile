@@ -9,16 +9,16 @@
 ###############################################################################
 
 # Name of the driver
-DRIVER_NAME := anLcd
+DRIVER_NAME ?= anLcd
 
 # Version of the driver
-VERSION     := "0.1"
+VERSION     ?= "0.1"
 
 # Uncommend the following make-variable if your target-system doesn't 
 # support device-trees.
 #NO_DEVICE_TREE := 1
 
-DEVTREE     := anLcd_raspi.dts
+DEVTREE     ?= anLcd_raspi.dts
 BLOB_EXT    ?= dtbo
 
 # Common include directory for header files which are included in user and
@@ -44,31 +44,33 @@ CROSS_KERNEL_SRC_DIR ?= $(shell echo $(TOOLCHAIN_BASE)/build/linux-[!h]* )
 # Compiler switches for the development phase or for building this module
 # external. Otherwise the kernel-config (Kconfig) will accomplish this.
 # See also in Kconfig.
-EXTERN_DEFINES += CONFIG_DEBUG_AN_LCD
-EXTERN_DEFINES += CONFIG_DEBUG_AN_LCD_FSM
-EXTERN_DEFINES += CONFIG_LCD_UNICODE
-EXTERN_DEFINES += CONFIG_AN_LCD_READBACK
-EXTERN_DEFINES += CONFIG_ST7066U
-EXTERN_DEFINES += CONFIG_LCD_USE_BACKSLASH
-EXTERN_DEFINES += CONFIG_LCD_USE_PARAGRAPH
+ifndef EXTERN_DEFINES
+  EXTERN_DEFINES += CONFIG_DEBUG_AN_LCD
+  EXTERN_DEFINES += CONFIG_DEBUG_AN_LCD_FSM
+  EXTERN_DEFINES += CONFIG_LCD_UNICODE
+  EXTERN_DEFINES += CONFIG_AN_LCD_READBACK
+  EXTERN_DEFINES += CONFIG_ST7066U
+  EXTERN_DEFINES += CONFIG_LCD_USE_BACKSLASH
+  EXTERN_DEFINES += CONFIG_LCD_USE_PARAGRAPH
 
-ifdef NO_DEVICE_TREE
-  EXTERN_DEFINES += CONFIG_AN_LCD_NO_DEV_TREE
+  ifdef NO_DEVICE_TREE
+    EXTERN_DEFINES += CONFIG_AN_LCD_NO_DEV_TREE
 
-  # If your target-system doesn't support device-trees, so you need
-  # eventually adapt the following defines of the display dimensions and
-  # it's GPIO connections.
-  # Please see also the specification of your display.
-  EXTERN_DEFINES += CONFIG_AN_LCD_MAX_X=16
-  EXTERN_DEFINES += CONFIG_AN_LCD_MAX_Y=2
-  EXTERN_DEFINES += CONFIG_AN_LCD_GPIO_NUMBER_RS=16
-  EXTERN_DEFINES += CONFIG_AN_LCD_GPIO_NUMBER_RW=20
-  EXTERN_DEFINES += CONFIG_AN_LCD_GPIO_NUMBER_EN=21
-  EXTERN_DEFINES += CONFIG_AN_LCD_GPIO_NUMBER_D4=5
-  EXTERN_DEFINES += CONFIG_AN_LCD_GPIO_NUMBER_D5=6
-  EXTERN_DEFINES += CONFIG_AN_LCD_GPIO_NUMBER_D6=13
-  EXTERN_DEFINES += CONFIG_AN_LCD_GPIO_NUMBER_D7=26
-endif
+    # If your target-system doesn't support device-trees, so you need
+    # eventually adapt the following defines of the display dimensions and
+    # it's GPIO connections.
+    # Please see also the specification of your display.
+    EXTERN_DEFINES += CONFIG_AN_LCD_MAX_X=16
+    EXTERN_DEFINES += CONFIG_AN_LCD_MAX_Y=2
+    EXTERN_DEFINES += CONFIG_AN_LCD_GPIO_NUMBER_RS=16
+    EXTERN_DEFINES += CONFIG_AN_LCD_GPIO_NUMBER_RW=20
+    EXTERN_DEFINES += CONFIG_AN_LCD_GPIO_NUMBER_EN=21
+    EXTERN_DEFINES += CONFIG_AN_LCD_GPIO_NUMBER_D4=5
+    EXTERN_DEFINES += CONFIG_AN_LCD_GPIO_NUMBER_D5=6
+    EXTERN_DEFINES += CONFIG_AN_LCD_GPIO_NUMBER_D6=13
+    EXTERN_DEFINES += CONFIG_AN_LCD_GPIO_NUMBER_D7=26
+  endif # ifdef NO_DEVICE_TREE
+endif # ifndef EXTERN_DEFINES
 
 #==============================================================================
 # Optional variables for simplify the developing.
