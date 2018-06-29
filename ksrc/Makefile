@@ -130,7 +130,7 @@ else
    BASE_ORIGIN_MAKEFILE = $(BASE_MAKEFILE).$(DRIVER_NAME).origin
    BASE_ORIGIN_KCONFIG  = $(BASE_KCONFIG).$(DRIVER_NAME).origin
 
-.PHONY: all checkKernelDir clean status
+.PHONY: all checkKernelDir clean status modules_install
 
 # Invoke of the kernels master-makefile.
 all: checkKernelDir status # $(BLOB_NAME)
@@ -139,6 +139,14 @@ ifdef CROSS_COMPILE
 else
 	@$(MAKE) -C $(KERNEL_SRC_DIR) SUBDIRS=$(PWD) EXTERN=1 modules
 endif
+
+modules_install: all
+ifdef CROSS_COMPILE
+	@$(MAKE) ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) -C $(KERNEL_SRC_DIR) SUBDIRS=$(PWD) EXTERN=1 modules_install
+else
+	@$(MAKE) -C $(KERNEL_SRC_DIR) SUBDIRS=$(PWD) EXTERN=1 modules_install
+endif
+
 
 .PHONY: blob
 blob: $(BLOB_NAME)
