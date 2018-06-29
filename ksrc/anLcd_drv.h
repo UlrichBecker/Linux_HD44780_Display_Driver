@@ -20,12 +20,13 @@
 #include <linux/fs.h>
 #include <linux/cdev.h>
 #include <linux/device.h>
-#include <asm/uaccess.h>
+//#include <asm/uaccess.h>
 #include <linux/workqueue.h>
 #include <linux/delay.h>
 #include <linux/gpio.h>
 #include <linux/sched.h>
 #include <linux/wait.h>
+#include <linux/uaccess.h>
 #ifdef CONFIG_PROC_FS
    #include <linux/proc_fs.h>
    #include <linux/seq_file.h>

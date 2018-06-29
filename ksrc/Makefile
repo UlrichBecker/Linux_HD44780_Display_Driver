@@ -35,10 +35,15 @@ REL_BUILD_IN_DIR := drivers/video
 # If yo want to use a cross-compiler, so you need eventually to adapt the
 # following variables on your tool chain.
 # E.g.: your tool chain was made by Yocto instead of Buildroot.
-TOOLCHAIN_BASE ?= ~/src/Linux_build/buildroot_pi/output/
+
+ifdef KERNEL_SRC  # In the case of YOCTO recipe KERNEL_SRC is predefined.
+   CROSS_KERNEL_SRC_DIR = $(KERNEL_SRC)
+else
+   TOOLCHAIN_BASE ?= ~/src/Linux_build/buildroot_pi/output/
+   CROSS_KERNEL_SRC_DIR ?= $(shell echo $(TOOLCHAIN_BASE)/build/linux-[!h]* )
+endif
 TOOLCHAIN_PATH ?= $(TOOLCHAIN_BASE)host/usr/bin/
 CROSS_COMPILE  ?= $(TOOLCHAIN_PATH)arm-buildroot-linux-uclibcgnueabihf-
-CROSS_KERNEL_SRC_DIR ?= $(shell echo $(TOOLCHAIN_BASE)/build/linux-[!h]* )
 
 #==============================================================================
 # Compiler switches for the development phase or for building this module
