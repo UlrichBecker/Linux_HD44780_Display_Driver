@@ -140,16 +140,16 @@ else
 # Invoke of the kernels master-makefile.
 all: checkKernelDir status # $(BLOB_NAME)
 ifdef CROSS_COMPILE
-	@$(MAKE) ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) -C $(KERNEL_SRC_DIR) SUBDIRS=$(PWD) EXTERN=1 modules
+	@$(MAKE) ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) -C $(KERNEL_SRC_DIR) M=$(PWD) EXTERN=1 modules
 else
-	@$(MAKE) -C $(KERNEL_SRC_DIR) SUBDIRS=$(PWD) EXTERN=1 modules
+	@$(MAKE) -C $(KERNEL_SRC_DIR) M=$(PWD) EXTERN=1 modules
 endif
 
 modules_install: all
 ifdef CROSS_COMPILE
-	@$(MAKE) ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) -C $(KERNEL_SRC_DIR) SUBDIRS=$(PWD) EXTERN=1 modules_install
+	@$(MAKE) ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) -C $(KERNEL_SRC_DIR) M=$(PWD) EXTERN=1 modules_install
 else
-	@$(MAKE) -C $(KERNEL_SRC_DIR) SUBDIRS=$(PWD) EXTERN=1 modules_install
+	@$(MAKE) -C $(KERNEL_SRC_DIR) M=$(PWD) EXTERN=1 modules_install
 endif
 
 
@@ -243,8 +243,6 @@ unpatch: checkKernelDir
 		rm -fr $(ABS_BUILD_IN_DIR); \
 	fi
 	@echo "INFO: Patch to source-tree \"$$(readlink -m $(KERNEL_SRC_DIR))\" revoked!"
-
-	
 
 clean:
 	rm -f *.mod.c *.o *.ko modules.order Module.symvers .*.cmd .tmp_versions/*
