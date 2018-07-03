@@ -31,7 +31,7 @@ S = "${WORKDIR}/git"
 LIC_FILES_CHKSUM = "file://${S}/LICENSE;md5=84dcc94da3adb52b53ae4fa38fe49e5d"
 
 # This puts the module name into /etc/modules-load.d/modname.conf on the image.
-KERNEL_MODULE_AUTOLOAD += "anlcd"
+KERNEL_MODULE_AUTOLOAD += "anLcd"
 
 FILES_${PN}      += "${sysconfdir}/udev/rules.d/*.rules"
 FILES_${PN}-dev  += "${includedir}/linux/*.h ${docdir}/anLcd/*.md"
