@@ -14,6 +14,7 @@
 
 SUMMARY = "Recipe to build external Linux kernel module for a alphanumeric" \
           "HD44780 compatible display"
+AUTHOR  = "Ulrich Becker"
 SECTION = "modules"
 LICENSE = "GPLv3"
 
