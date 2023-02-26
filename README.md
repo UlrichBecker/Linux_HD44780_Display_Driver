@@ -155,3 +155,9 @@ Auto scroll: enabled
 ```
 **Note:** The first byte is the address byte of the CG-RAM (here address 0x01) followed by the 8 pattern-bytes.
 
+**A few words about my coding style.**
+Yes, I know my code is not Linux-style.
+For example, I open curly braces in a new line, and don't use tabs except in makefiles.
+So the code can never officially become part of the Linux kernel, which I never planned to do.
+However, since I am the only author of the code so far and have maintained it alone so far,
+I keep the code in a form that is most pleasing to my eyes.
