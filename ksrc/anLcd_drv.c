@@ -640,7 +640,7 @@ static const struct file_operations global_procFileOps =
 /* Process-file-system end ***************************************************/
 
 /* Power management functions begin ******************************************/
-#ifdef CONFIG_PM
+#ifdef CONFIG_PM_
 /*-----------------------------------------------------------------------------
  */
 static int onPmSuspend( struct device* pDev, pm_message_t state )
@@ -673,7 +673,7 @@ static int onPmResume( struct device* pDev )
   return 0;
 }
 
-#endif /* ifdef CONFIG_PM */
+#endif /* ifdef CONFIG_PM_ */
 /* Power management functions end ********************************************/
 
 
@@ -850,7 +850,7 @@ static int __init driverInit( void )
    atomic_set( &global.oLcd.openCount, 0 );
    DEBUG_MESSAGE( ": Instance " DEVICE_BASE_FILE_NAME " created\n" );
 
-#ifdef CONFIG_PM
+#ifdef CONFIG_PM_
   global.pClass->suspend = onPmSuspend;
   global.pClass->resume =  onPmResume;
 #endif
