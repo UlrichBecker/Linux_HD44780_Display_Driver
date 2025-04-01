@@ -16,7 +16,7 @@ VERSION     ?= "0.1"
 
 # Uncommend the following make-variable if your target-system doesn't 
 # support device-trees.
-NO_DEVICE_TREE := 1
+#NO_DEVICE_TREE := 1
 
 DEVTREE     ?= anLcd_raspi.dts
 BLOB_EXT    ?= dtbo

@@ -636,7 +636,7 @@ static ssize_t procOnWrite( struct file* seq, const char* pData,
 /*-----------------------------------------------------------------------------
  */
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 0, 0)
-static const struct proc_ops mg_procFileOps =
+static const struct proc_ops global_procFileOps =
 {
   .proc_open    = _procOnOpen,
   .proc_read    = seq_read,
@@ -645,7 +645,7 @@ static const struct proc_ops mg_procFileOps =
   .proc_release = single_release
 };
 #else
-static const struct file_operations mg_procFileOps =
+static const struct file_operations global_procFileOps =
 {
   .owner   = THIS_MODULE,
   .open    = _procOnOpen,
@@ -879,7 +879,7 @@ static int __init driverInit( void )
   global.pClass->resume =  onPmResume;
 #endif
 
-#ifdef CONFIG_PROC_FS_
+#ifdef CONFIG_PROC_FS
  #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 0, 0)
    global.poProcFile = proc_create_data( PROC_FS_NAME,
                                          S_IRUGO | S_IWUGO,
