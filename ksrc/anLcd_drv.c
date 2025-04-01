@@ -570,18 +570,22 @@ static int procOnOpen( struct seq_file* pSeqFile, void* pValue )
                global.oLcd.maxX, global.oLcd.maxY );
 
    for( i = 0; i < ARRAY_SIZE( global.oLcd.port.list ); i++ )
+   {
       seq_printf( pSeqFile, "GPIO %02d: %s = %s\n",
                   global.oLcd.port.list[i]->number,
                   global.oLcd.port.list[i]->name,
                  (gpio_get_value( global.oLcd.port.list[i]->number ) != 0)?
                  "high" : "low" );
+   }
 
    seq_printf( pSeqFile, "\nValid commands for ioctl():\n" ); 
 
    for( pCurrentItem = mg_ioctlList; pCurrentItem->function != NULL; pCurrentItem++ )
+   {
       seq_printf( pSeqFile, "%s:\t0x%08X\n",
                   pCurrentItem->name,
                   pCurrentItem->number );
+   }
 
    seq_printf( pSeqFile, "\nAuto scroll: %s\n",
                lcdIsAutoScroll()? "enabled" : "disabled" );
@@ -592,7 +596,11 @@ static int procOnOpen( struct seq_file* pSeqFile, void* pValue )
  */
 static int _procOnOpen( struct inode* pInode, struct file *pFile )
 {
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 0, 0)
+   return single_open( pFile, procOnOpen, NULL );
+#else
    return single_open( pFile, procOnOpen, PDE_DATA( pInode ) );
+#endif
 }
 
 /*-----------------------------------------------------------------------------
@@ -627,15 +635,27 @@ static ssize_t procOnWrite( struct file* seq, const char* pData,
 
 /*-----------------------------------------------------------------------------
  */
-static const struct file_operations global_procFileOps =
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 0, 0)
+static const struct proc_ops mg_procFileOps =
+{
+  .proc_open    = _procOnOpen,
+  .proc_read    = seq_read,
+  .proc_write   = procOnWrite,
+  .proc_lseek   = seq_lseek,
+  .proc_release = single_release
+};
+#else
+static const struct file_operations mg_procFileOps =
 {
   .owner   = THIS_MODULE,
   .open    = _procOnOpen,
   .read    = seq_read,
   .write   = procOnWrite,
   .llseek  = seq_lseek,
-  .release = single_release,
+  .release = single_release
 };
+#endif
+
 #endif /* ifdef CONFIG_PROC_FS */
 /* Process-file-system end ***************************************************/
 
@@ -829,7 +849,11 @@ static int __init driverInit( void )
   /*!
    * Register of the driver-instances visible in /sys/class/DEVICE_BASE_FILE_NAME
    */
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 0, 0)
+   global.pClass = class_create( DEVICE_BASE_FILE_NAME );
+#else
    global.pClass = class_create( THIS_MODULE, DEVICE_BASE_FILE_NAME );
+#endif
    if( IS_ERR(global.pClass) )
    {
       ERROR_MESSAGE( "class_create: No udev support\n" );
@@ -855,14 +879,22 @@ static int __init driverInit( void )
   global.pClass->resume =  onPmResume;
 #endif
 
-#ifdef CONFIG_PROC_FS
+#ifdef CONFIG_PROC_FS_
+ #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 0, 0)
+   global.poProcFile = proc_create_data( PROC_FS_NAME,
+                                         S_IRUGO | S_IWUGO,
+                                         NULL,
+                                         &global_procFileOps,
+                                         NULL );
+ #else
    global.poProcFile = proc_create( PROC_FS_NAME,
-                                S_IRUGO | S_IWUGO,
-                                NULL,
-                                &global_procFileOps );
+                                    S_IRUGO | S_IWUGO,
+                                    NULL,
+                                    &global_procFileOps );
+ #endif
    if( global.poProcFile == NULL )
    {
-      ERROR_MESSAGE( "Unable to create proc entry: /proc/"PROC_FS_NAME" !\n" );
+      ERROR_MESSAGE( "Unable to create proc entry: /proc/" PROC_FS_NAME " !\n" );
       goto L_INSTANCE_REMOVE;
    }
 #endif

@@ -16,7 +16,7 @@ VERSION     ?= "0.1"
 
 # Uncommend the following make-variable if your target-system doesn't 
 # support device-trees.
-#NO_DEVICE_TREE := 1
+NO_DEVICE_TREE := 1
 
 DEVTREE     ?= anLcd_raspi.dts
 BLOB_EXT    ?= dtbo
@@ -110,7 +110,7 @@ ifdef KERNELRELEASE
       __SOURCES__ = $(notdir $(SOURCES))
    endif
    EXTRA_CFLAGS += $(addprefix -D, $(DEFINES))
-   EXTRA_CFLAGS += -std=gnu99
+   EXTRA_CFLAGS += -std=gnu99 -Wno-declaration-after-statement -Wno-vla
    EXTRA_CFLAGS += -Wfatal-errors
    obj-$(CONFIG_ALPHANUMERIC_DISPLAY) += $(DRIVER_NAME).o
    $(DRIVER_NAME)-objs := $(patsubst %.c, %.o, $(__SOURCES__))
@@ -285,6 +285,9 @@ SSH := ssh $(TARGET_DEVICE_USER)@$(TARGET_DEVICE_IP)
 else
 SSH :=
 endif # ifdef CROSS_COMPILE
+
+.PHONY: rebuild
+rebuild: clean all
 
 .PHONY: rmmod
 rmmod:
