@@ -16,7 +16,7 @@ VERSION     ?= "0.1"
 
 # Uncommend the following make-variable if your target-system doesn't 
 # support device-trees.
-#NO_DEVICE_TREE := 1
+NO_DEVICE_TREE := 1
 
 DEVTREE     ?= anLcd_raspi.dts
 BLOB_EXT    ?= dtbo
@@ -140,6 +140,7 @@ else
 .PHONY: all checkKernelDir clean status modules_install
 
 # Invoke of the kernels master-makefile.
+
 all: checkKernelDir status # $(BLOB_NAME)
 ifdef CROSS_COMPILE
 	@$(MAKE) ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) -C $(KERNEL_SRC_DIR) M=$(PWD) EXTERN=1 modules
@@ -176,7 +177,7 @@ checkKernelDir:
 	fi
 
 $(ABS_BUILD_IN_DIR):
-	@mkdir $(ABS_BUILD_IN_DIR); \
+	@mkdir -p $(ABS_BUILD_IN_DIR); \
 	if [ "$$?" != "0" ]; then \
 		echo "ERROR: Unable to create directory: \"$(ABS_BUILD_IN_DIR)\"" 1>&2; \
 		exit 1; \

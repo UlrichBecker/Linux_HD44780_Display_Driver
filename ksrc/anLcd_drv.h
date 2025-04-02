@@ -20,7 +20,6 @@
 #include <linux/fs.h>
 #include <linux/cdev.h>
 #include <linux/device.h>
-//#include <asm/uaccess.h>
 #include <linux/workqueue.h>
 #include <linux/delay.h>
 #include <linux/gpio.h>
@@ -57,11 +56,11 @@
  * "dmesg -w" corresponds the old “tail -f /var/log/messages”
  */
 #define ERROR_MESSAGE( constStr, n... ) \
-   printk( KERN_ERR DEVICE_BASE_FILE_NAME "-systemerror %d: %s" constStr, __LINE__, __func__, ## n )
+   printk( KERN_ERR DEVICE_BASE_FILE_NAME "-systemerror %d: %s: " constStr, __LINE__, __func__, ## n )
 
 #if defined( CONFIG_DEBUG_AN_LCD ) || defined(__DOXYGEN__)
    #define DEBUG_MESSAGE( constStr, n... ) \
-      printk( KERN_DEBUG DEVICE_BASE_FILE_NAME "-dbg %d: %s" constStr, __LINE__, __func__, ## n )
+      printk( KERN_DEBUG DEVICE_BASE_FILE_NAME "-dbg %d: %s: " constStr, __LINE__, __func__, ## n )
 
    #define DEBUG_ACCESSMODE( pFile ) \
       DEBUG_MESSAGE( ": access: %s\n", \

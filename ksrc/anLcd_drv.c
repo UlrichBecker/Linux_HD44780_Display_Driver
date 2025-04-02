@@ -15,7 +15,7 @@
 #include <linux/slab.h>
 
 MODULE_LICENSE( "GPL" );
-MODULE_AUTHOR( "Ulrich Becker www.INKATRON.de");
+MODULE_AUTHOR( "Ulrich Becker");
 MODULE_DESCRIPTION( "HD44780 compatible alphanumeric display-driver" );
 MODULE_VERSION( __VERSION );
 
@@ -823,7 +823,7 @@ static int __init requestPort( void )
  */
 static int __init driverInit( void )
 {
-   DEBUG_MESSAGE("\n");
+   DEBUG_MESSAGE( "*** Loading driver \"" DEVICE_BASE_FILE_NAME "\" ***\n" );
 
    if( alloc_chrdev_region( &global.deviceNumber, 0, 1, DEVICE_BASE_FILE_NAME ) < 0 )
    {
@@ -895,7 +895,12 @@ static int __init driverInit( void )
    if( global.poProcFile == NULL )
    {
       ERROR_MESSAGE( "Unable to create proc entry: /proc/" PROC_FS_NAME " !\n" );
-      goto L_INSTANCE_REMOVE;
+      //goto L_INSTANCE_REMOVE;
+      /*
+       * For the case there is an old entry in the proc-filesystem it`s better
+       * to jump to remove_proc_entry().
+       */
+      goto L_PROC_ENTRY_REMOVE;
    }
 #endif
 
@@ -903,7 +908,11 @@ static int __init driverInit( void )
    if( global.oWorkQueue.poWorkqueue == NULL )
    {
       ERROR_MESSAGE( "Unable to create work-queue!\n" );
+    #ifdef CONFIG_PROC_FS
+      goto L_PROC_ENTRY_REMOVE;
+    #else
       goto L_INSTANCE_REMOVE;
+    #endif
    }
 
    INIT_WORK( &global.oWorkQueue.oInit, onWorkqueueInit );
@@ -938,23 +947,36 @@ static int __init driverInit( void )
    global.oWaitQueue.bussy = true;
    queue_work( global.oWorkQueue.poWorkqueue, &global.oWorkQueue.oInit );
 
+   DEBUG_MESSAGE( "success\n" );
    return 0;
 
 L_WORKQUEUE_REMOVE:
+   DEBUG_MESSAGE( "destroy_workqueue()\n" );
    destroy_workqueue( global.oWorkQueue.poWorkqueue );
 
+#ifdef CONFIG_PROC_FS
+L_PROC_ENTRY_REMOVE:
+   DEBUG_MESSAGE( "remove_proc_entry()\n" );
+   remove_proc_entry( PROC_FS_NAME, NULL );
+#endif
+
 L_INSTANCE_REMOVE:
+   DEBUG_MESSAGE( "device_destroy()\n" );
    device_destroy( global.pClass, global.deviceNumber );
 
 L_CLASS_REMOVE:
+   DEBUG_MESSAGE( "class_destroy()\n" );
    class_destroy( global.pClass );
 
 L_REMOVE_DEV:
+   DEBUG_MESSAGE( "kobject_put()\n" );
    kobject_put( &global.pObject->kobj );
 
 L_DEVICE_NUMBER:
+   DEBUG_MESSAGE( "unregister_chrdev_region()\n" );
    unregister_chrdev_region( global.deviceNumber, 1 );
 
+   DEBUG_MESSAGE( "Failed to load driver \"" DEVICE_BASE_FILE_NAME "\"\n" );
    return -EIO;
 }
 
@@ -963,25 +985,24 @@ L_DEVICE_NUMBER:
  */
 static void __exit driverExit( void )
 {
-  DEBUG_MESSAGE("\n");
+   DEBUG_MESSAGE( "*** Removing driver \"" DEVICE_BASE_FILE_NAME "\" ***\n" );
 
   //cancel_work( &global.oWorkQueue.oInit );
-  destroy_workqueue( global.oWorkQueue.poWorkqueue );
+   destroy_workqueue( global.oWorkQueue.poWorkqueue );
 
   
-  lcdOff();
+   lcdOff();
 
   
-  releasePort();
+   releasePort();
 #ifdef CONFIG_PROC_FS
-  remove_proc_entry( PROC_FS_NAME, NULL );
+   remove_proc_entry( PROC_FS_NAME, NULL );
 #endif
-  device_destroy( global.pClass, global.deviceNumber );
-  class_destroy( global.pClass );
-  cdev_del( global.pObject );
-  unregister_chrdev_region( global.deviceNumber, 1 );
-  kfree( global.oBuffer.pData );
-  return;
+   device_destroy( global.pClass, global.deviceNumber );
+   class_destroy( global.pClass );
+   cdev_del( global.pObject );
+   unregister_chrdev_region( global.deviceNumber, 1 );
+   kfree( global.oBuffer.pData );
 }
 
 /*-----------------------------------------------------------------------------
